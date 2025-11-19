@@ -70,7 +70,6 @@ public class GameStateMgr : MonoBehaviour
     
     public void StartGame()
     {
-        Debug.Log("進入遊戲");
         ChangeState(GameState.InGame);
     }
 

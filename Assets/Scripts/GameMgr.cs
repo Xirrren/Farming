@@ -102,13 +102,11 @@ public class GameMgr : MonoBehaviour
     
     void EndGame()
     {
-        Debug.Log("Game Over!");
         GameStateMgr.instance.ChangeState(GameState.GameResult);
     }
     
     void BackToStart()
     {
-        Debug.Log("回去");
         Reset();
         GameStateMgr.instance.ChangeState(GameState.StartMenu);
     }
