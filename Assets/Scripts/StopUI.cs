@@ -5,15 +5,18 @@ using UnityEngine.UI;
 
 public class StopUI : MonoBehaviour
 {
-    [SerializeField]private Button stopBtn,leaveBtn;
+    [SerializeField]private Button stopBtn,leaveBtn,saveBtn;
     [SerializeField]private GameObject stopScreen;
 
     void Start()
     {
         stopScreen.SetActive(false);
         stopBtn.onClick.AddListener(ToggleStop);
+        saveBtn.onClick.AddListener(ToggleStop);
         leaveBtn.onClick.AddListener(delegate
         {
+            GameMgr.instance.Reset();
+            ToggleStop();
             GameStateMgr.instance.ChangeState(GameState.StartMenu);
         });
     }

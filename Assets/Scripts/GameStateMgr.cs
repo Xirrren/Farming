@@ -45,7 +45,7 @@ public class GameStateMgr : MonoBehaviour
             case GameState.StartMenu:
                 if (startScreen != null)
                 {
-                    startScreen?.SetActive(true);
+                    startScreen.SetActive(true);
                 }
                 Time.timeScale = 0f;
                 break;
@@ -53,7 +53,7 @@ public class GameStateMgr : MonoBehaviour
             case GameState.InGame:
                 if (gameScreen != null)
                 {
-                    gameScreen?.SetActive(true);
+                    gameScreen.SetActive(true);
                 }
                 Time.timeScale = 1f;
                 break;
@@ -70,6 +70,7 @@ public class GameStateMgr : MonoBehaviour
     
     public void StartGame()
     {
+        Debug.Log("進入遊戲");
         ChangeState(GameState.InGame);
     }
 

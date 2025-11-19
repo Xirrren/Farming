@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameMgr : MonoBehaviour
 {
+    public static GameMgr instance;
     [Header("遊戲時長")]
     private float gameTime = 0f;
     [SerializeField] private float maxGameTime = 120f;
@@ -14,23 +16,26 @@ public class GameMgr : MonoBehaviour
     [Header("懷疑值0/3")]
     [SerializeField] private int damageLevel = 0;
     [SerializeField] private Image[] damageImgs;
+    
+    [Header("遊戲結束")]
+    [SerializeField] private TMP_Text resultResonTxt;
+    [SerializeField] private Button continueBtn;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
-        if (gameTimeSlider != null)
-        {
-            gameTimeSlider.minValue = 0f;
-            gameTimeSlider.maxValue = maxGameTime;
-            gameTimeSlider.value = 0f;
-        }
-        
-        for (int i = 0; i < damageImgs.Length; i++)
-        {
-            damageImgs[i].gameObject.SetActive(false);
-        }
+        Reset();
+        continueBtn.onClick.AddListener(BackToStart);
     }
 
     void Update()
     {
+        if (GameStateMgr.instance.currentState != GameState.InGame)
+        {return;}
         if (gameTime < maxGameTime)
         {
             gameTime += Time.deltaTime;
@@ -43,6 +48,7 @@ public class GameMgr : MonoBehaviour
             if (gameTime >= maxGameTime)
             {
                 gameTime = maxGameTime;
+                resultResonTxt.text = "Time up!";
                 EndGame();
             }
         }
@@ -50,6 +56,7 @@ public class GameMgr : MonoBehaviour
         if (damageLevel >= 3)
         {
             Invoke("EndGame",.5f);
+            resultResonTxt.text = "Suspicion level is full.";
         }
     }
     
@@ -72,11 +79,38 @@ public class GameMgr : MonoBehaviour
             }
         }
     }
+
+    public void Reset()
+    {
+        gameTime = 0f;
+        damageLevel = 0;
+        
+        MoneyMgr.instance.ResetMoney();
+        
+        if (gameTimeSlider != null)
+        {
+            gameTimeSlider.minValue = 0f;
+            gameTimeSlider.maxValue = maxGameTime;
+            gameTimeSlider.value = 0f;
+        }
+    
+        for (int i = 0; i < damageImgs.Length; i++)
+        {
+            damageImgs[i].gameObject.SetActive(false);
+        }
+    }
     
     void EndGame()
     {
         Debug.Log("Game Over!");
         GameStateMgr.instance.ChangeState(GameState.GameResult);
+    }
+    
+    void BackToStart()
+    {
+        Debug.Log("回去");
+        Reset();
+        GameStateMgr.instance.ChangeState(GameState.StartMenu);
     }
     
 }
