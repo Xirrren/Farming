@@ -21,6 +21,8 @@ public class GameMgr : MonoBehaviour
     [Header("懷疑值0/3")]
     [SerializeField] private int damageLevel = 0;
     [SerializeField] private Image[] damageImgs;
+    [SerializeField] private Sprite damagedSprite;
+    [SerializeField] private Sprite normalSprite;
     
     [Header("遊戲結束")]
     [SerializeField] private TMP_Text resultResonTxt;
@@ -36,6 +38,7 @@ public class GameMgr : MonoBehaviour
         continueBtn.onClick.AddListener(BackToStart);
         bgSprite = bG.GetComponent<SpriteRenderer>();
         Reset();
+        AudioMgr.instance.PlayBGM("Game-BGM",3f);
     }
 
     void Update()
@@ -58,9 +61,8 @@ public class GameMgr : MonoBehaviour
                 EndGame();
             }
         }
-        float t = gameTime / maxGameTime;   // 0 → 1
+        float t = gameTime / maxGameTime; 
 
-        // 我們只在 "遊戲時間過一半" 後開始變色
         if (t > 0.5f)
         {
             float lerpValue = (t - 0.5f) / 0.5f;  // 0 → 1 （代表後半段）
@@ -73,23 +75,22 @@ public class GameMgr : MonoBehaviour
             resultResonTxt.text = "Suspicion level is full.";
         }
     }
-    
-    
 
     public void AddDamageLevel()
     {
         damageLevel++;
         damageLevel = Mathf.Clamp(damageLevel, 0, damageImgs.Length);
+        AudioMgr.instance.PlaySFX("Increased suspicion");
 
         for (int i = 0; i < damageImgs.Length; i++)
         {
             if (i < damageLevel)
             {
-                damageImgs[i].gameObject.SetActive(true);
+                damageImgs[i].sprite = damagedSprite;
             }
             else
             {
-                damageImgs[i].gameObject.SetActive(false);
+                damageImgs[i].sprite = normalSprite;
             }
         }
     }
@@ -112,7 +113,7 @@ public class GameMgr : MonoBehaviour
     
         for (int i = 0; i < damageImgs.Length; i++)
         {
-            damageImgs[i].gameObject.SetActive(false);
+            damageImgs[i].sprite = normalSprite;
         }
         
     }
