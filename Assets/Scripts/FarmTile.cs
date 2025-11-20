@@ -42,7 +42,7 @@ public class FarmTile : MonoBehaviour
                         MoneyMgr.instance.DeductMoney(3);
                         break;
                     case 1:
-                        MoneyMgr.instance.DeductMoney(1);
+                        MoneyMgr.instance.DeductMoney(-1);
                         break;
                     case 2:
                         MoneyMgr.instance.AddMoney(0);

@@ -100,8 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallSpeed: 1.2
-  waveAmplitude: 0.5
-  waveFrequency: 1.5
+  waveAmplitude: 0.3
+  waveFrequency: 0.5
   floatAmplitude: 0.2
   floatFrequency: 2
 --- !u!114 &3714804297726404588
