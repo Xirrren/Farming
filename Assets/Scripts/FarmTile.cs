@@ -36,6 +36,21 @@ public class FarmTile : MonoBehaviour
             {
                 currentStage = 0;
                 currentHealth = farmData.maxHealth;
+                switch (currentHealth)
+                {
+                    case 0:
+                        MoneyMgr.instance.DeductMoney(3);
+                        break;
+                    case 1:
+                        MoneyMgr.instance.DeductMoney(1);
+                        break;
+                    case 2:
+                        MoneyMgr.instance.AddMoney(0);
+                        break;
+                    case 3:
+                        MoneyMgr.instance.AddMoney(1);
+                        break;
+                }
             }
 
             UpdateSprite();

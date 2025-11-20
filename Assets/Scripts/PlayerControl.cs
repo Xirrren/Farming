@@ -16,7 +16,13 @@ public class PlayerControl : MonoBehaviour
     
     [Header("UI")]
     public Slider attackChargeSlider; 
-    public GameObject trashIcon;
+
+    [Header("垃圾圖示")]
+    [Tooltip("在 Inspector 直接指派玩家身上的垃圾圖示 Sprite")]
+    [SerializeField] private Sprite trashIconSpriteAsset;
+    [SerializeField] private Vector2 trashIconLocalOffset = new Vector2(0f, 0.75f);
+    [SerializeField] private int trashIconSortingOrder = 10;
+    private SpriteRenderer trashIconSprite;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -37,8 +43,7 @@ public class PlayerControl : MonoBehaviour
         if (attackChargeSlider != null)
             attackChargeSlider.value = 0;
 
-        if (trashIcon != null)
-            trashIcon.SetActive(false);
+        InitializeTrashIconSprite();
     }
 
     void Update()
@@ -58,13 +63,13 @@ public class PlayerControl : MonoBehaviour
         }
 
         // 左鍵按下 → 拾取 或 開始攻擊
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             TryPickUpTrashOrStartAttack();
         }
 
         // 左鍵持續按住 → 若在蓄力，就計時並更新 Slider
-        if (isChargingAttack && Input.GetMouseButton(0))
+        if (isChargingAttack && Input.GetKey(KeyCode.E))
         {
             attackChargeTimer += Time.deltaTime;
 
@@ -131,8 +136,8 @@ public class PlayerControl : MonoBehaviour
                 hasTrash = true;
 
                 // ★ 撿到垃圾 → 顯示垃圾圖示
-                if (trashIcon != null)
-                    trashIcon.SetActive(true);
+                if (trashIconSprite != null)
+                    trashIconSprite.enabled = true;
 
                 Destroy(trash.gameObject);
                 Debug.Log("撿到垃圾！");
@@ -172,8 +177,8 @@ public class PlayerControl : MonoBehaviour
 
         // 成功攻擊後消耗垃圾 → 隱藏垃圾圖示
         hasTrash = false;
-        if (trashIcon != null)
-            trashIcon.SetActive(false);
+        if (trashIconSprite != null)
+            trashIconSprite.enabled = false;
 
         AttackNearbyFarm();
 
@@ -211,6 +216,31 @@ public class PlayerControl : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public bool IsChargingAttack
+    {
+        get { return isChargingAttack; }
+    }
+
+    void InitializeTrashIconSprite()
+    {
+        if (trashIconSpriteAsset == null)
+        {
+            Debug.LogWarning("PlayerControl: 尚未在 Inspector 指派垃圾圖示 Sprite。");
+        }
+
+        if (trashIconSprite == null)
+        {
+            GameObject iconObj = new GameObject("TrashIconSprite");
+            iconObj.transform.SetParent(transform);
+            iconObj.transform.localPosition = trashIconLocalOffset;
+            trashIconSprite = iconObj.AddComponent<SpriteRenderer>();
+            trashIconSprite.sortingOrder = trashIconSortingOrder;
+        }
+
+        trashIconSprite.sprite = trashIconSpriteAsset;
+        trashIconSprite.enabled = false;
     }
 
     void OnDrawGizmosSelected()
