@@ -57,7 +57,7 @@ public class MoneyMgr : MonoBehaviour
 
     IEnumerator DelayTurnOff(string paramName)
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         bossAnimator.SetBool(paramName, false);
         isPlayingAnimation = false;
     }
