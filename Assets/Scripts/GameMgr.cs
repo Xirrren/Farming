@@ -8,10 +8,15 @@ using UnityEngine.UI;
 public class GameMgr : MonoBehaviour
 {
     public static GameMgr instance;
+    
     [Header("遊戲時長")]
     private float gameTime = 0f;
     [SerializeField] private float maxGameTime = 120f;
     [SerializeField] private Slider gameTimeSlider;
+    [SerializeField] private GameObject bG;
+    [SerializeField] private Color bGDayTimeColor = Color.white,bGNightTimeColor = Color.red;
+
+    private SpriteRenderer bgSprite;
     
     [Header("懷疑值0/3")]
     [SerializeField] private int damageLevel = 0;
@@ -28,8 +33,9 @@ public class GameMgr : MonoBehaviour
 
     private void Start()
     {
-        Reset();
         continueBtn.onClick.AddListener(BackToStart);
+        bgSprite = bG.GetComponent<SpriteRenderer>();
+        Reset();
     }
 
     void Update()
@@ -51,6 +57,14 @@ public class GameMgr : MonoBehaviour
                 resultResonTxt.text = "Time up!";
                 EndGame();
             }
+        }
+        float t = gameTime / maxGameTime;   // 0 → 1
+
+        // 我們只在 "遊戲時間過一半" 後開始變色
+        if (t > 0.5f)
+        {
+            float lerpValue = (t - 0.5f) / 0.5f;  // 0 → 1 （代表後半段）
+            bgSprite.color = Color.Lerp(bGDayTimeColor, bGNightTimeColor, lerpValue);
         }
 
         if (damageLevel >= 3)
@@ -85,6 +99,8 @@ public class GameMgr : MonoBehaviour
         gameTime = 0f;
         damageLevel = 0;
         
+        bgSprite.color = bGDayTimeColor;
+ 
         MoneyMgr.instance.ResetMoney();
         
         if (gameTimeSlider != null)
@@ -98,6 +114,7 @@ public class GameMgr : MonoBehaviour
         {
             damageImgs[i].gameObject.SetActive(false);
         }
+        
     }
     
     void EndGame()

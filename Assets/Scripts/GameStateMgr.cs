@@ -48,6 +48,7 @@ public class GameStateMgr : MonoBehaviour
                     startScreen.SetActive(true);
                 }
                 Time.timeScale = 0f;
+                GameMgr.instance.Reset();
                 break;
 
             case GameState.InGame:
