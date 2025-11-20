@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
+
 
 public class GameMgr : MonoBehaviour
 {
@@ -31,12 +33,14 @@ public class GameMgr : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        bgSprite = bG.GetComponent<SpriteRenderer>();
+
     }
+    
 
     private void Start()
     {
         continueBtn.onClick.AddListener(BackToStart);
-        bgSprite = bG.GetComponent<SpriteRenderer>();
         Reset();
         AudioMgr.instance.PlayBGM("Game-BGM",3f);
     }
@@ -80,6 +84,7 @@ public class GameMgr : MonoBehaviour
     {
         damageLevel++;
         damageLevel = Mathf.Clamp(damageLevel, 0, damageImgs.Length);
+
         AudioMgr.instance.PlaySFX("Increased suspicion");
 
         for (int i = 0; i < damageImgs.Length; i++)
@@ -93,7 +98,36 @@ public class GameMgr : MonoBehaviour
                 damageImgs[i].sprite = normalSprite;
             }
         }
+
+        // --- 只有最新那一格播放放大動畫 ---
+        int index = damageLevel - 1;
+
+        if (index >= 0 && index < damageImgs.Length)
+        {
+            var img = damageImgs[index].transform;
+
+            img.localScale = Vector3.one;
+            
+            img.DOScale(1.8f, 0.1f)
+                .SetEase(Ease.OutBack)
+                .OnComplete(() =>
+                {
+                    // 左右搖晃 1 秒（只在 X 軸晃動）
+                    img.DOShakePosition(
+                            duration: 1f,
+                            strength: new Vector2(30f, 0f), // 左右搖動幅度
+                            vibrato: 10,
+                            randomness: 0
+                        )
+                        .OnComplete(() =>
+                        {
+                            // 回到原大小
+                            img.DOScale(1f, 0.25f).SetEase(Ease.OutQuad);
+                        });
+                });
+        }
     }
+
 
     public void Reset()
     {
@@ -121,6 +155,7 @@ public class GameMgr : MonoBehaviour
     void EndGame()
     {
         GameStateMgr.instance.ChangeState(GameState.GameResult);
+        AudioMgr.instance.PlaySFX("Settlement");
     }
     
     void BackToStart()

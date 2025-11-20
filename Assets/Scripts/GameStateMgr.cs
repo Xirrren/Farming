@@ -57,6 +57,7 @@ public class GameStateMgr : MonoBehaviour
                     gameScreen.SetActive(true);
                 }
                 Time.timeScale = 1f;
+
                 break;
 
             case GameState.GameResult:

@@ -31,10 +31,12 @@ public class StopUI : MonoBehaviour
         if (stopScreen.activeInHierarchy)
         {
             Time.timeScale = 0f;
+            //RiverVFX.instance.PsPause();
         }
         else
         {
             Time.timeScale = 1f;
+            //RiverVFX.instance.PsPlay();
         }
     }
 
